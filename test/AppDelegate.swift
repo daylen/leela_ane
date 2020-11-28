@@ -7,6 +7,7 @@
 
 import Cocoa
 import SwiftUI
+import CoreML
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -28,6 +29,37 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.setFrameAutosaveName("Main Window")
         window.contentView = NSHostingView(rootView: contentView)
         window.makeKeyAndOrderFront(nil)
+
+        // ANE?
+        let config = MLModelConfiguration()
+        config.computeUnits = .all
+        
+        do {
+            let tokenIDMultiArray = try! MLMultiArray(shape: [32, 112, 64], dataType: MLMultiArrayDataType.float32)
+            for i in 0..<32 {
+                for j in 0..<112 {
+                    for k in 0..<64 {
+                        let index = [i, j, k] as [NSNumber]
+                        tokenIDMultiArray[index] = (Float.random(in: -1..<1) as NSNumber)
+                    }
+                }
+            }
+            
+            let model = try _42850_T40.init(configuration: config)
+            let start = DispatchTime.now()
+            for _ in 1...100 {
+                try model.prediction(input_1: tokenIDMultiArray)
+            }
+            let end = DispatchTime.now()
+            let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
+            let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
+            print("Time to evaluate: \(timeInterval) seconds")
+
+//            print(out.Identity)
+//            print(out.Identity_1)
+        } catch {
+            print("Error running model!")
+        }
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
