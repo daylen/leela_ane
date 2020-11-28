@@ -1,6 +1,6 @@
 # leela_ane
 
-An attempt to get the [lc0](https://lczero.org) network to run on the Neural Engine of the M1 chip.
+An attempt to get the [lc0](https://lczero.org) network to run on the Neural Engine of the M1 chip. Why? For faster chess programs!
 
 # Using this repo
 
@@ -23,3 +23,7 @@ For reasons I don't understand yet, inference on ANE and GPU is slower than infe
 .cpuAndGpu Time to evaluate: 29.006600709 seconds
 .cpuOnly Time to evaluate: 16.062404083 seconds
 ```
+
+# Verifying ANE usage
+
+I found [these instructions](https://github.com/hollance/neural-engine/blob/master/docs/is-model-using-ane.md) useful. (tl;dr there is no programmatic way to identify whether the ANE is being used, so the trick is to set a breakpoint on `-[_ANEModel program]`. When using `.all` for `computeUnits` it does break on that line.
